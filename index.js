@@ -1,6 +1,8 @@
 const webServer = require('./services/web-server.js');
 const database = require('./services/database.js');
 const dbConfig = require('./config/database.js');
+const axios = require('axios');
+
 
 const defaultThreadPoolSize = 4;
 
@@ -88,3 +90,71 @@ process.on('uncaughtException', err => {
 
   shutdown(err);
 });
+
+
+
+///////////////////////////PARTE DE MONITOR//////////////////////////////
+async function monitor () {
+
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  let mm = today.getMonth() + 1; // Months start at 0!
+  let dd = today.getDate();
+  let hora = today.getHours();
+  let minutos  = today.getMinutes();
+  let seguntos = today.getSeconds();
+  
+  if (dd < 10) dd = '0' + dd;
+  if (mm < 10) mm = '0' + mm;
+  if (hora < 10) hora = '0' + hora;
+  if (minutos < 10) minutos = '0' + minutos;
+  if (seguntos < 10) seguntos = '0' + seguntos;
+  
+  
+  const formattedToday = dd + '/' + mm + '/' + yyyy;
+  const HoraMin = hora + ':' + minutos + ':' + seguntos;
+ 
+ 
+
+  var axios = require('axios');
+	var data = { 
+		"email": process.env.NOME_CLIENTE,
+    "mensagem": "sistema com funcionamento normal",
+    "data": formattedToday + ' ' + HoraMin
+	}
+
+var config = {
+  method: 'post',
+  url: 'https://pap3ln1bx4.execute-api.us-east-1.amazonaws.com/patients/post',
+  headers: { 
+    'Content-Type': 'text/plain'
+  },
+  data : data
+};
+
+axios(config)
+.then(function (response) {
+  console.log(JSON.stringify(response.data));
+  console.log('Monitor do sistema ligado!')
+  console.log(data)
+})
+.catch(function (error) {
+  console.log(error);
+});
+
+
+
+
+}
+
+//monitor()
+
+
+function startTimer() { 
+ 
+  timer = setInterval(function() {  
+        monitor()      
+  }, 900000);
+}
+    
+startTimer()

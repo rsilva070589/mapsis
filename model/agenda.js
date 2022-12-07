@@ -116,10 +116,10 @@ const createSqlOSAgenda =
   :CHASSI,
   :COR_EXTERNA,
   :KM,  
-  sysdate,sysdate,
-  :DATA_AGENDADA,
-  :DATA_PREVISAO_FIM,
-  :DATA_PROMETIDA,
+  sysdate,sysdate, 
+  to_date(:DATA_AGENDADA,'DD/MM/YYYY HH24:MI:SS'),
+  to_date(:DATA_PREVISAO_FIM,'DD/MM/YYYY HH24:MI:SS'),
+  to_date(:DATA_PROMETIDA,'DD/MM/YYYY HH24:MI:SS'), 
   'N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'
   )    
  `
@@ -154,9 +154,9 @@ const createSqlOSAgenda =
   values ( :COD_EMPRESA,
            :COD_OS_AGENDA,  
            :COD_SERVICO,
-           :PRISMA,
-           :DATA_COMECA,
-           :DATA_FIM,
+           :PRISMA, 
+           to_date(:DATA_COMECA,'DD/MM/YYYY HH24:MI:SS'),
+           to_date(:DATA_FIM,'DD/MM/YYYY HH24:MI:SS'), 
            :TEMPO_PADRAO,
            :TEMPO_PADRAO_SERVICO,
            'C',0,1)
@@ -202,6 +202,7 @@ const TabelaOSAgenda = await database.simpleExecute(createSqlOSAgenda,
                                               ]
                                               , { autoCommit: true });  
 
+                                              
   const TabelaOSAgendaServico = await database.simpleExecute
                                             (createSqlOsAgendaServico, 
                                               [  
@@ -212,9 +213,10 @@ const TabelaOSAgenda = await database.simpleExecute(createSqlOSAgenda,
                                                 NEWOSAGENDA.DATA_AGENDADA,
                                                 NEWOSAGENDA.DATA_PREVISAO_FIM,
                                                 NEWOSAGENDA.TEMPO_PADRAO,
-                                                NEWOSAGENDA.TEMPO_PADRAO 
+                                                NEWOSAGENDA.TEMPO_PADRAO
                                               ]
-                                              , { autoCommit: true });   
+                                              , { autoCommit: true }); 
+                                               
 
       return NEWOSAGENDA;
     }
@@ -239,9 +241,9 @@ const deleteSql =
 
   async function del(ID) {
  
-    const result = await database.simpleExecute(deleteSql, [ID], { autoCommit: true });
-    const chip   = await database.simpleExecute(deleteChipSql, [ID], { autoCommit: true });
-    const Ogr   = await database.simpleExecute(deleteAgendaReclamacaopSql, [ID], { autoCommit: true });
+    const result  = await database.simpleExecute(deleteSql, [ID], { autoCommit: true });
+    const chip    = await database.simpleExecute(deleteChipSql, [ID], { autoCommit: true });
+    const Ogr     = await database.simpleExecute(deleteAgendaReclamacaopSql, [ID], { autoCommit: true });
     console.log(ID) 
     return result ;
   }

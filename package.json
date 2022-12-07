@@ -21,7 +21,7 @@
     "scripts": "build/**/*.js",
     "assets": "views/**/*",
     "targets": [
-      "node16"
+      "node18"
     ],
     "outputPath": "dist"
   },

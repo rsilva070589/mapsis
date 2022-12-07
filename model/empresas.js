@@ -1,3 +1,4 @@
+const res = require('express/lib/response.js');
 const database = require('../services/database.js');
 
 const baseQuery = 
@@ -20,5 +21,7 @@ async function find(context) {
 
   return result.rows
 }
+
+
 
 module.exports.find = find;
