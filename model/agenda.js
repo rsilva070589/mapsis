@@ -26,7 +26,8 @@ const baseQuery =
         ANO,
         TIPO_TOYOTA,
         CLIENTE_AGUARDA,
-        TIPO_ATENDIMENTO   
+        TIPO_ATENDIMENTO, 
+        OBSERVACOES
 FROM  OS_AGENDA OG 
 where 1=1
 `;
@@ -66,6 +67,7 @@ const createSqlOSAgenda =
   COD_PRODUTO,
   COD_MODELO,
   ANO_MODELO,
+  ANO,
   PLACA,
   CHASSI,
   COR_EXTERNA,
@@ -97,7 +99,16 @@ const createSqlOSAgenda =
   TELE_CONTATO,
   TELE_HORARIO_CONTATO,
   QUICK_STOP,
-  EH_FIAT_PROFISSIONAL
+  EH_FIAT_PROFISSIONAL,
+  EH_PASSANTE,
+  CLIENTE_DT,
+  COLLABORATION,
+  SERVICO_EXPRESSO,
+  RECEBIDO,
+  ATEND_INICIADO,
+  CLIENTE_NOME,
+  EMAIL,
+  OBSERVACOES
   )
    VALUES
   (
@@ -112,6 +123,7 @@ const createSqlOSAgenda =
   :COD_PRODUTO,
   :COD_MODELO,
   :ANO_MODELO,
+  :ANO,
   :PLACA,
   :CHASSI,
   :COR_EXTERNA,
@@ -120,7 +132,10 @@ const createSqlOSAgenda =
   to_date(:DATA_AGENDADA,'DD/MM/YYYY HH24:MI:SS'),
   to_date(:DATA_PREVISAO_FIM,'DD/MM/YYYY HH24:MI:SS'),
   to_date(:DATA_PROMETIDA,'DD/MM/YYYY HH24:MI:SS'), 
-  'N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'
+  'N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N',
+  :CLIENTE_NOME,
+  :EMAIL,
+  :OBSERVACOES
   )    
  `
 
@@ -162,7 +177,9 @@ const createSqlOSAgenda =
            'C',0,1)
    `
 
- const SqlNumeracaoOSAgenda = `SELECT SEQ_COD_OS_AGENDA.NEXTVAL COD_OS_AGENDA FROM DUAL` 
+ const SqlNumeracaoOSAgenda = `SELECT SEQ_COD_OS_AGENDA.NEXTVAL COD_OS_AGENDA FROM DUAL`  
+
+const sqlDadosCliente = `select email_nfe,nome from clientes cli where cli.cod_cliente=02317550154`
 
   
  async function create(emp) {
@@ -171,6 +188,11 @@ const createSqlOSAgenda =
  const result   = await database.simpleExecute(SqlNumeracaoOSAgenda)
  console.log(result.rows[0])
  const NumeroAgenda = result.rows[0]['COD_OS_AGENDA']
+
+ const dadosCliente = await database.simpleExecute(sqlDadosCliente)
+ console.log(dadosCliente.rows[0])
+ const nomeCliente = dadosCliente.rows[0]['NOME']
+ const emailCLiente = dadosCliente.rows[0]['EMAIL_NFE']
 
 const TabelaOSAgenda = await database.simpleExecute(createSqlOSAgenda, 
                                                       [ 
@@ -182,6 +204,7 @@ const TabelaOSAgenda = await database.simpleExecute(createSqlOSAgenda,
                                                         NEWOSAGENDA.COD_PRODUTO,
                                                         NEWOSAGENDA.COD_MODELO,
                                                         NEWOSAGENDA.ANO_MODELO,
+                                                        NEWOSAGENDA.ANO,
                                                         NEWOSAGENDA.PLACA,
                                                         NEWOSAGENDA.CHASSI,
                                                         NEWOSAGENDA.COR_EXTERNA,
@@ -189,7 +212,9 @@ const TabelaOSAgenda = await database.simpleExecute(createSqlOSAgenda,
                                                         NEWOSAGENDA.DATA_AGENDADA,
                                                         NEWOSAGENDA.DATA_PREVISAO_FIM,
                                                         NEWOSAGENDA.DATA_PROMETIDA,
-
+                                                        nomeCliente,
+                                                        emailCLiente,
+                                                        NEWOSAGENDA.OBSERVACAO
                                                       ]
                                                       , { autoCommit: true });
    

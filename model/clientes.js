@@ -102,7 +102,8 @@ const createSqlClientes =
  `insert into clientes cli (
     cli.cod_cliente,
     cli.nome,
-    cli.endereco_eletronico, 
+    cli.endereco_eletronico,  
+    cli.email_nfe,
     cli.rua_res, 
     cli.fachada_res,
     cli.complemento_res,
@@ -127,7 +128,8 @@ const createSqlClientes =
   ) values (
     :cod_cliente,
     :nome,
-    :endereco_eletronico,
+    :endereco_eletronico, 
+    :email_nfe,
     :rua_res, 
     :fachada_res,
     :complemento_res,
@@ -209,6 +211,7 @@ async function create(emp) {
     const result  = await database.simpleExecute(createSqlClientes,
       [ CLIENTE.COD_CLIENTE,
         CLIENTE.NOME,
+        CLIENTE.ENDERECO_ELETRONICO,
         CLIENTE.ENDERECO_ELETRONICO,
         CLIENTE.RUA_RES,
         CLIENTE.FACHADA_RES,

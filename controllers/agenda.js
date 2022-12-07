@@ -44,10 +44,11 @@ function getEmployeeFromRec(req) {
     COD_PRODUTO: req.body.COD_PRODUTO,
     COD_MODELO: req.body.COD_MODELO, 
     ANO_MODELO: req.body.ANO_MODELO, 
+    ANO: req.body.ANO, 
+    OBSERVACAO: req.body.OBSERVACAO,
     PLACA: req.body.PLACA, 
     CHASSI: req.body.CHASSI,                                                                          
-    COR_EXTERNA: req.body.COR_EXTERNA,     
-    ANO_MODELO: req.body.ANO_MODELO,
+    COR_EXTERNA: req.body.COR_EXTERNA,  
     KM: req.body.KM,  
     RECLAMACAO: req.body.RECLAMACAO  
   };
