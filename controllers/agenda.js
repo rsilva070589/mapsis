@@ -50,7 +50,11 @@ function getEmployeeFromRec(req) {
     CHASSI: req.body.CHASSI,                                                                          
     COR_EXTERNA: req.body.COR_EXTERNA,  
     KM: req.body.KM,  
-    RECLAMACAO: req.body.RECLAMACAO  
+    RECLAMACAO: req.body.RECLAMACAO,
+    EMAIL: req.body.EMAIL,
+    DDD_CEL: req.body.DDD_CEL,
+    TELEFONE_CEL: req.body.TELEFONE_CEL,    
+    CLIENTE_NOME: req.body.CLIENTE_NOME
   };
 
   return agenda;

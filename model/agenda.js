@@ -108,7 +108,10 @@ const createSqlOSAgenda =
   ATEND_INICIADO,
   CLIENTE_NOME,
   EMAIL,
-  OBSERVACOES
+  OBSERVACOES,
+  CLIENTE_DDD_CEL,
+  CLIENTE_FONE_CEL
+
   )
    VALUES
   (
@@ -135,7 +138,9 @@ const createSqlOSAgenda =
   'N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N',
   :CLIENTE_NOME,
   :EMAIL,
-  :OBSERVACOES
+  :OBSERVACOES,
+  :DDD_CEL,
+  :TELEFONE_CEL
   )    
  `
 
@@ -212,9 +217,11 @@ const TabelaOSAgenda = await database.simpleExecute(createSqlOSAgenda,
                                                         NEWOSAGENDA.DATA_AGENDADA,
                                                         NEWOSAGENDA.DATA_PREVISAO_FIM,
                                                         NEWOSAGENDA.DATA_PROMETIDA,
-                                                        nomeCliente,
-                                                        emailCLiente,
-                                                        NEWOSAGENDA.OBSERVACAO
+                                                        NEWOSAGENDA.CLIENTE_NOME,
+                                                        NEWOSAGENDA.EMAIL,
+                                                        NEWOSAGENDA.OBSERVACAO,
+                                                        NEWOSAGENDA.DDD_CEL,
+                                                        NEWOSAGENDA.TELEFONE_CEL
                                                       ]
                                                       , { autoCommit: true });
    
