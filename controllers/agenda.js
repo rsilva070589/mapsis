@@ -65,8 +65,11 @@ async function post(req, res, next) {
     let agenda = getEmployeeFromRec(req);
 
   os = await employees.create(agenda);
-
-    res.status(201).json(agenda);
+    console.log({ 'numero_agenda': os
+                })
+    res.status(201).json({ 'result': 'agendamento criado com suceso',
+                           'numero_agenda': os
+                          });
   } catch (err) {
     next(err);
   }

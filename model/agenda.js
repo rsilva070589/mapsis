@@ -250,7 +250,7 @@ const TabelaOSAgenda = await database.simpleExecute(createSqlOSAgenda,
                                               , { autoCommit: true }); 
                                                
 
-      return NEWOSAGENDA;
+      return NumeroAgenda;
     }
 
 module.exports.create = create;
