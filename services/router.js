@@ -48,7 +48,7 @@ router.route('/agenda/:id?')
     body("COD_MODELO").notEmpty().withMessage("Informe o Cod Modelo"),
     body("COR_EXTERNA").notEmpty().withMessage("Informe a Cor do Veiculo"), 
     body("CHASSI").isLength({ min: 17, max: 17 }).withMessage("o Chassi deve conter 17 digitos"),
-    body("PLACA").isLength({ min: 8, max: 9 }).withMessage("Informe uma Placa Valida"),
+    body("PLACA").isLength({ min: 7, max: 9 }).withMessage("Informe uma Placa Valida"),
     body("KM").isInt().withMessage("Informe o KM do Cliente"),
     body("RECLAMACAO").isLength({ min: 1, max: 99 }).withMessage("Informe o Reparo para o veiculo"),
     //body("DATA_AGENDADA").isISO8601('dd/mm/yyyy').isDate().withMessage("Informe uma data de agendamento!"),
