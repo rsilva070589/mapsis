@@ -70,8 +70,8 @@ async function post(req, res, next) {
     res.status(201).json({ 'result': 'agendamento criado com sucesso',
                            'numero_agenda': os
                           });
-  } catch (err) {
-    next(err);
+  } catch (err) { 
+    next(err)
   }
 }
 

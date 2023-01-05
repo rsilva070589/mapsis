@@ -183,21 +183,38 @@ const createSqlOSAgenda =
    `
 
  const SqlNumeracaoOSAgenda = `SELECT SEQ_COD_OS_AGENDA.NEXTVAL COD_OS_AGENDA FROM DUAL`  
-
-const sqlDadosCliente = `select email_nfe,nome from clientes cli where cli.cod_cliente=02317550154`
-
   
  async function create(emp) {
  const NEWOSAGENDA = Object.assign({}, emp); 
+
+ 
 
  const result   = await database.simpleExecute(SqlNumeracaoOSAgenda)
  console.log(result.rows[0])
  const NumeroAgenda = result.rows[0]['COD_OS_AGENDA']
 
- const dadosCliente = await database.simpleExecute(sqlDadosCliente)
- console.log(dadosCliente.rows[0])
- const nomeCliente = dadosCliente.rows[0]['NOME']
- const emailCLiente = dadosCliente.rows[0]['EMAIL_NFE']
+ 
+
+let COD_CLIENTE = null
+ 
+async function  getCliente() { 
+  const sqlDadosCliente = `select email_nfe,nome,cod_cliente from clientes cli where cli.cod_cliente=:COD_CLIENTE`
+  
+  const dadosCliente = await database.simpleExecute(sqlDadosCliente, [NEWOSAGENDA.COD_CLIENTE])
+   
+  if (dadosCliente.rows[0] != undefined) {  
+    COD_CLIENTE = NEWOSAGENDA.COD_CLIENTE
+  }else{
+    COD_CLIENTE = 1
+  }
+
+  return COD_CLIENTE
+}
+
+COD_CLIENTE= await getCliente()
+
+console.log(COD_CLIENTE)
+
 
 const TabelaOSAgenda = await database.simpleExecute(createSqlOSAgenda, 
                                                       [ 
@@ -205,7 +222,7 @@ const TabelaOSAgenda = await database.simpleExecute(createSqlOSAgenda,
                                                         NumeroAgenda,
                                                         NEWOSAGENDA.CONSULTOR,
                                                         NEWOSAGENDA.PRISMA,            
-                                                        NEWOSAGENDA.COD_CLIENTE,
+                                                        COD_CLIENTE,
                                                         NEWOSAGENDA.COD_PRODUTO,
                                                         NEWOSAGENDA.COD_MODELO,
                                                         NEWOSAGENDA.ANO_MODELO,
