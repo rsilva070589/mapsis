@@ -107,8 +107,13 @@ async function del(req, res, next) {
 
     const success = await employees.delete(id);
 
-    if (success) {
-      res.status(204).end();
+    if (success) { 
+   
+      res.status(202).json({  'result': 'deletado com sucesso',
+                              'numero_agenda': success
+      });
+
+
     } else {
       res.status(404).end();
     }

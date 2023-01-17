@@ -290,11 +290,14 @@ const deleteSql =
 
   async function del(ID) {
  
-    const result  = await database.simpleExecute(deleteSql, [ID], { autoCommit: true });
-    const chip    = await database.simpleExecute(deleteChipSql, [ID], { autoCommit: true });
+    
+    const chip    = await database.simpleExecute(deleteChipSql, [ID], { autoCommit: true });    
     const Ogr     = await database.simpleExecute(deleteAgendaReclamacaopSql, [ID], { autoCommit: true });
+    const result  = await database.simpleExecute(deleteSql, [ID], { autoCommit: true });
+    
+
     console.log(ID) 
-    return result ;
+    return ID ;
   }
    
 

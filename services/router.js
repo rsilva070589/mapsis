@@ -14,10 +14,14 @@ const frota      = require('../controllers/frota.js');
 const agenda     = require('../controllers/agenda.js');
 const os         = require('../controllers/os.js');
 const empresas   = require('../controllers/empresas.js'); 
-const res        = require('express/lib/response');
+const res        = require('express/lib/response'); 
+const constraint    = require('../controllers/constraint.js');
  
  
-  
+router.route('/constraint/:id?')
+.get(constraint.get);    
+
+
 router.route('/modelos/:id?')
 .get(modelos.get);    
 
