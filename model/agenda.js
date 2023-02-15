@@ -181,21 +181,30 @@ const createSqlOSAgenda =
            :TEMPO_PADRAO_SERVICO,
            'C',0,1)
    `
-
- const SqlNumeracaoOSAgenda = `SELECT SEQ_COD_OS_AGENDA.NEXTVAL COD_OS_AGENDA FROM DUAL`  
+ 
+   
   
  async function create(emp) {
  const NEWOSAGENDA = Object.assign({}, emp); 
 
+ let ValidaUsuario = false
+ let ValidaBox = false
+ let NumeroAgenda = null
+ let COD_CLIENTE = null
  
+async function gravarAgenda () {
+   
+async function getSequenciaAgenda() {
+  const SqlNumeracaoOSAgenda = `SELECT SEQ_COD_OS_AGENDA.NEXTVAL COD_OS_AGENDA FROM DUAL`
+  const result   = await database.simpleExecute(SqlNumeracaoOSAgenda)  
+  const NumeroAgenda = result.rows[0]['COD_OS_AGENDA']
+  console.log(NumeroAgenda)
+  return NumeroAgenda
+ }
 
- const result   = await database.simpleExecute(SqlNumeracaoOSAgenda)
- console.log(result.rows[0])
- const NumeroAgenda = result.rows[0]['COD_OS_AGENDA']
+ NumeroAgenda = await getSequenciaAgenda()
 
- 
 
-let COD_CLIENTE = null
  
 async function  getCliente() { 
   const sqlDadosCliente = `select email_nfe,nome,cod_cliente from clientes cli where cli.cod_cliente=:COD_CLIENTE`
@@ -207,7 +216,6 @@ async function  getCliente() {
   }else{
     COD_CLIENTE = 1
   }
-
   return COD_CLIENTE
 }
 
@@ -250,7 +258,6 @@ const TabelaOSAgenda = await database.simpleExecute(createSqlOSAgenda,
                                                 NumeroAgenda                                                
                                               ]
                                               , { autoCommit: true });  
-
                                               
   const TabelaOSAgendaServico = await database.simpleExecute
                                             (createSqlOsAgendaServico, 
@@ -267,8 +274,51 @@ const TabelaOSAgenda = await database.simpleExecute(createSqlOSAgenda,
                                               , { autoCommit: true }); 
                                                
 
-      return NumeroAgenda;
-    }
+}
+
+async function getBox() {
+  const SqlNumeracaoOSAgenda = `select count(*) qtde  from prisma_box eu where eu.prisma=:PRISMA`
+  const result   = await database.simpleExecute(SqlNumeracaoOSAgenda, [NEWOSAGENDA.PRISMA])  
+  const valor = result.rows[0]['QTDE']
+  console.log('validar Box: '+valor)
+  if (valor == 0) {
+    
+   return 'PRISMA BOX NAO CADASTRADO'
+   
+  } else {    
+   return 'OK'
+  }   
+ }
+ 
+async function getUsuario() {
+  const SqlNumeracaoOSAgenda = `select count(*) qtde  from empresas_usuarios eu where eu.nome=:NOME`
+  const result   = await database.simpleExecute(SqlNumeracaoOSAgenda, [NEWOSAGENDA.CONSULTOR])  
+  const valor = result.rows[0]['QTDE']
+  console.log('validar Usuario: '+valor)
+  if (valor == 0) {
+    NumeroAgenda='CONSULTOR NAO CADASTRADO'
+   return false
+   
+  } else {
+    
+   return 'OK'
+  }
+   
+ }
+
+ ValidaUsuario = await getUsuario()
+ ValidaBox     = await getBox()
+   
+
+  if (ValidaUsuario  && ValidaBox  ){
+    await gravarAgenda()
+    return NumeroAgenda;
+  }else{
+    return ('Erro de validação: ' + '  BOX: '+ValidaBox + '  / CONSULTOR: '+ValidaUsuario)
+  }  
+  
+      
+  }
 
 module.exports.create = create;
 

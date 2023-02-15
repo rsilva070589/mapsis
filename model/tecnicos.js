@@ -1,19 +1,37 @@
 const database = require('../services/database.js');
 
 const baseQuery = 
-`select 
+`select * from (
+SELECT EU.COD_EMPRESA,
+       EU.NOME as LOGIN,
+       EU.NOME_COMPLETO,
+       EU.COD_FUNCAO as cod_tecnico,
+       EF.DESCRICAO,
+       '' BOX,
+       'CONSULTOR' TIPO
+  FROM PARM_SYS P, EMPRESAS_USUARIOS EU, EMPRESAS_FUNCOES EF
+ WHERE P.COD_EMPRESA = EU.COD_EMPRESA
+   AND P.COD_RECEPCIONISTA = EU.COD_FUNCAO
+   AND EF.COD_FUNCAO = EU.COD_FUNCAO
+ 
+UNION ALL
+
+select 
       st.cod_empresa,
+      '' login,
+      st.nome, 
       st.cod_tecnico,
-      st.nome,
-      pb.prisma box
+      ST.FUNCAO,
+      pb.prisma box,
+      'PRODUTIVO' TIPO
 from  servicos_tecnicos st,
       prisma_box pb
 where st.ativo = 'S'
   and st.cod_empresa = pb.cod_empresa_filtro
   and st.cod_tecnico = pb.cod_tecnico
-`;
-
-const sortableColumns = ['id', 'nome'];
+  AND PB.PRISMA IS NOT NULL
+  )   
+   `;
 
 async function find(context) {
   let query = baseQuery;
@@ -22,46 +40,8 @@ async function find(context) {
   if (context.id) { 
     binds.tipo_id = context.id;
     console.log(context.id)
-    query += `\and st.cod_tecnico = :tipo_id`;
+    query += `\and pm.cod_tecnico = :tipo_id`;
   }
-
-  if (context.NOME) {
-    binds.NOME = context.NOME;
-    console.log(context.NOME) 
-    query += '\nand NOME = :NOME';
-  }
-  
-  if (context.sort === undefined) {
-    query += '\norder by NOME asc';
-  } else {
-    let [column, order] = context.sort.split(':');
- 
-    if (!sortableColumns.includes(column)) {
-      throw new Error('Invalid "sort" column');
-    }
- 
-    if (order === undefined) {
-      order = 'asc';
-    }
- 
-    if (order !== 'asc' && order !== 'desc') {
-      throw new Error('Invalid "sort" order');
-    }
- 
-    query += `\norder by "${column}" ${order}`;
-  }
-
-  if (context.skip) {
-    binds.row_offset = context.skip;
-
-    query += '\noffset :row_offset rows';
-  }
-
-  const limit = (context.limit > 0) ? context.limit : 30;
-
-  binds.row_limit = limit;
-
-  query += '\nfetch next :row_limit rows only';
 
   const result = await database.simpleExecute(query, binds);
 
@@ -69,4 +49,3 @@ async function find(context) {
 }
 
 module.exports.find = find;
-
