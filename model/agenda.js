@@ -283,7 +283,7 @@ async function getBox() {
   console.log('validar Box: '+valor)
   if (valor == 0) {
     
-   return 'PRISMA BOX NAO CADASTRADO'
+   return false
    
   } else {    
    return 'OK'
@@ -296,7 +296,7 @@ async function getUsuario() {
   const valor = result.rows[0]['QTDE']
   console.log('validar Usuario: '+valor)
   if (valor == 0) {
-    NumeroAgenda='CONSULTOR NAO CADASTRADO'
+    
    return false
    
   } else {
@@ -312,7 +312,7 @@ async function getUsuario() {
 
   if (ValidaUsuario  && ValidaBox  ){
     await gravarAgenda()
-    return NumeroAgenda;
+    return (''+NumeroAgenda);
   }else{
     return ('Erro de validação: ' + '  BOX: '+ValidaBox + '  / CONSULTOR: '+ValidaUsuario)
   }  

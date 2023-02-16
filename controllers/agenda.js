@@ -67,9 +67,17 @@ async function post(req, res, next) {
   os = await employees.create(agenda);
     console.log({ 'numero_agenda': os
                 })
-    res.status(201).json({ 'result': 'SOLICITACAO PROCESSADA',
+
+    if  (os.length < 15) {
+      res.status(201).json({ 'result': 'SUCESSO',
                            'numero_agenda': os
                           });
+    } else {
+      res.status(400).json({ 'result': 'ERRO DE VALIDACAO',
+      'numero_agenda': os
+     });
+    }        
+    
   } catch (err) { 
     next(err)
   }
