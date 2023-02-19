@@ -4,7 +4,8 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 const { body, validationResult} = require('express-validator'); 
  
- 
+const maxItens   = require('../controllers/maxxItens.js'); 
+const maxItensTipo   = require('../controllers/maxxItensTipo.js'); 
 const clientes   = require('../controllers/clientes.js');
 const modelos    = require('../controllers/modelos.js');
 const servicos   = require('../controllers/servicos.js');
@@ -15,7 +16,7 @@ const agenda     = require('../controllers/agenda.js');
 const os         = require('../controllers/os.js');
 const empresas   = require('../controllers/empresas.js'); 
 const res        = require('express/lib/response'); 
-const constraint    = require('../controllers/constraint.js');
+const constraint = require('../controllers/constraint.js');
  
  
 router.route('/constraint/:id?')
@@ -117,6 +118,13 @@ router.route('/clientes/:id?')
               }
        ,clientes.post
       );
+
+
+router.route('/itens/:id?')
+.get(maxItens.get);
+
+router.route('/itensTipo/:id?')
+.get(maxItensTipo.get)
 
 
  
