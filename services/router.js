@@ -1,7 +1,10 @@
 const express    = require('express');
 const router     = new express.Router('express-promise-router');
 const bodyParser = require('body-parser');
-router.use(bodyParser.json());
+var cors = require('cors');
+
+
+router.use(bodyParser.json()).use(cors());
 const { body, validationResult} = require('express-validator'); 
  
 
