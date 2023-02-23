@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 const { body, validationResult} = require('express-validator'); 
  
+
+const maxImagens   = require('../controllers/maxxImagens.js'); 
 const maxItens   = require('../controllers/maxxItens.js'); 
 const maxItensTipo   = require('../controllers/maxxItensTipo.js'); 
 const clientes   = require('../controllers/clientes.js');
@@ -125,6 +127,9 @@ router.route('/itens/:id?')
 
 router.route('/itensTipo/:id?')
 .get(maxItensTipo.get)
+
+router.route('/imagens/:id?')
+.get(maxImagens.get)
 
 
  
