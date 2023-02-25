@@ -126,7 +126,36 @@ router.route('/clientes/:id?')
 
 
 router.route('/itens/:id?')
-.get(maxItens.get);
+.get(maxItens.get)
+.post(
+  [
+
+    body("AMBIENTE").notEmpty().withMessage("Informe  AMBIENTE"),
+    body("TIPO").notEmpty().withMessage("Informe TIPO"), 
+    body("NOMENCLATURA").notEmpty().withMessage("Informe  NOMENCLATURA"),
+    body("FORNECEDOR").notEmpty().withMessage("Informe  FORNECEDOR"),
+    body("DESCRICAO").notEmpty().withMessage("Informe  DESCRICAO"),
+    body("UND").notEmpty().withMessage("Informe  UND"),
+    body("QTDE").notEmpty().withMessage("Informe  QTDE"),
+    body("VLR_UNITARIO").notEmpty().withMessage("Informe  VLR_UNITARIO"),
+    body("FRETE").notEmpty().withMessage("Informe  FRETE"),
+    body("VLR_MAO_OBRA").notEmpty().withMessage("Informe  VLR_MAO_OBRA"),
+    body("CONTINGENCIA").notEmpty().withMessage("Informe  CONTINGENCIA"),
+    body("CUSTO_TOTAL").notEmpty().withMessage("Informe  CUSTO_TOTAL"),
+    body("TAXA").notEmpty().withMessage("Informe  TAXA"),
+    body("PRECO_TOTAL").notEmpty().withMessage("Informe  PRECO_TOTAL"),
+    body("LUCRO").notEmpty().withMessage("Informe  LUCRO")
+ 
+  ],
+  (req, res, next) => {    
+           const errors = validationResult(req);  
+           if(!errors.isEmpty()){
+             return res.status(400).json({errors: errors.array()});
+           }  
+           return next();
+          }
+   ,maxItens.post
+  );
 
 router.route('/itensTipo/:id?')
 .get(maxItensTipo.get)

@@ -28,11 +28,9 @@ async function get(req, res, next) {
 module.exports.get = get;
 
 function getItemFromRec(req) {
-  const ITEM = {
-    ID_ITEM:      req.body.IDITEM,
-    PAVIMENTO:    req.body.PAVIMENTO,
+  const ITEM = {        
     AMBIENTE:     req.body.AMBIENTE,
-    APLICACAO:    req.body.APLICACAO,
+    LUCRO:        req.body.LUCRO,
     TIPO:         req.body.TIPO,
     NOMENCLATURA: req.body.NOMENCLATURA,
     FORNECEDOR:   req.body.FORNECEDOR,
@@ -42,7 +40,11 @@ function getItemFromRec(req) {
     VLR_UNITARIO: req.body.VLR_UNITARIO,
     FRETE:        req.body.FRETE,
     VLR_MAO_OBRA: req.body.VLR_MAO_OBRA,
-    CONTINGENCIA: req.body.CONTINGENCIA 
+    CONTINGENCIA: req.body.CONTINGENCIA,
+    OPCAO: req.body.OPCAO ,
+    TAXA: req.body.TAXA ,
+    PRECO_TOTAL: req.body.PRECO_TOTAL ,
+    CUSTO_TOTAL: req.body.CUSTO_TOTAL 
   };
 
   return ITEM;
