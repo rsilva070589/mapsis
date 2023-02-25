@@ -127,6 +127,8 @@ router.route('/clientes/:id?')
 
 router.route('/itens/:id?')
 .get(maxItens.get)
+.put(maxItens.put)
+.delete(maxItens.delete)
 .post(
   [
 

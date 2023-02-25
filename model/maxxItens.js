@@ -126,59 +126,58 @@ async function create(emp) {
 
 }                  
 module.exports.create = create;
-/*                           
+                           
 const updateSql =
- `update clientes cli
+ `update NEWMAXX_ITENS
   set 
-  cli.endereco_eletronico     = :ENDERECO_ELETRONICO, 
-  cli.rua_res                 = :RUA_RES, 
-  cli.fachada_res             = :FACHADA_RES,
-  cli.complemento_res         = :COMPLEMENTO_RES,
-  cli.bairro_res              = :BAIRRO_RES,
-  cli.cod_cid_res             = :COD_CID_RES,
-  cli.cep_res                 = :CEP_RES,
-  cli.uf_res                  = :UF_RES, 
-  cli.prefixo_cel             = :PREFIXO_CEL,
-  cli.telefone_cel            = :TELEFONE_CEL
+  AMBIENTE        = :AMBIENTE, 
+  LUCRO           = :LUCRO, 
+  TIPO            = :TIPO,
+  NOMENCLATURA    = :NOMENCLATURA,
+  FORNECEDOR      = :FORNECEDOR,
+  DESCRICAO      = :DESCRICAO,
+  UND             = :UND,
+  QTDE            = :QTDE,
+  VLR_UNITARIO    = :VLR_UNITARIO,
+  FRETE           = :FRETE,
+  VLR_MAO_OBRA    = :VLR_MAO_OBRA,
+  CONTINGENCIA    = :CONTINGENCIA,
+  OPCAO           = :OPCAO,
+  TAXA            = :TAXA,
+  PRECO_TOTAL     = :PRECO_TOTAL,
+  CUSTO_TOTAL     = :CUSTO_TOTAL
 
-  where cli.cod_cliente = :ID
+  where ID = :ID 
   `
   ;
 
 async function update(emp) {
-  const UpdateCliente = Object.assign({}, emp); 
-  const result = await database.simpleExecute(updateSql, UpdateCliente, { autoCommit: true });
-  return UpdateCliente;  
+  console.log(emp)
+
+  
+  const binds = {
+    id: 7
+  };
+
+  const result = await database.simpleExecute(updateSql,emp, { autoCommit: true });
+  return binds;  
 }
 
 module.exports.update = update;
 
-/*
+
 const deleteSql =
- `begin
-
-    delete from job_history
-    where employee_id = :employee_id;
-
-    delete from employees
-    where employee_id = :employee_id;
-
-    :rowcount := sql%rowcount;
-
-  end;`;
+ `delete from NEWMAXX_ITENS
+ where ID = :ID
+ `;
 
 async function del(id) {
   const binds = {
-    employee_id: id,
-    rowcount: {
-      dir: oracledb.BIND_OUT,
-      type: oracledb.NUMBER
-    }
+    id: id
   };
   const result = await database.simpleExecute(deleteSql, binds, { autoCommit: true });
 
-  return result.outBinds.rowcount === 1;
+  return binds;
 }
 
 module.exports.delete = del;
-**/

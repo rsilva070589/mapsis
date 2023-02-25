@@ -53,20 +53,27 @@ function getItemFromRec(req) {
 
 
 function getItemFromUpdate(req) {
-  const ClientUP = { 
-    ENDERECO_ELETRONICO: req.body.ENDERECO_ELETRONICO,
-    RUA_RES: req.body.RUA_RES,
-    FACHADA_RES: req.body.FACHADA_RES,
-    COMPLEMENTO_RES: req.body.COMPLEMENTO_RES,
-    BAIRRO_RES: req.body.BAIRRO_RES,
-    COD_CID_RES: req.body.COD_CID_RES,
-    CEP_RES: req.body.CEP_RES,
-    UF_RES: req.body.UF_RES,
-    PREFIXO_CEL: req.body.PREFIXO_CEL,
-    TELEFONE_CEL: req.body.TELEFONE_CEL    
+  const ITEM = {        
+    AMBIENTE:     req.body.AMBIENTE,
+    LUCRO:        req.body.LUCRO,
+    TIPO:         req.body.TIPO,
+    NOMENCLATURA: req.body.NOMENCLATURA,
+    FORNECEDOR:   req.body.FORNECEDOR,
+    DESCRICAO:    req.body.DESCRICAO,
+    UND:          req.body.UND,
+    QTDE:         req.body.QTDE,
+    VLR_UNITARIO: req.body.VLR_UNITARIO,
+    FRETE:        req.body.FRETE,
+    VLR_MAO_OBRA: req.body.VLR_MAO_OBRA,
+    CONTINGENCIA: req.body.CONTINGENCIA,
+    OPCAO: req.body.OPCAO ,
+    TAXA: req.body.TAXA ,
+    PRECO_TOTAL: req.body.PRECO_TOTAL ,
+    CUSTO_TOTAL: req.body.CUSTO_TOTAL 
   };
 
-  return ClientUP;
+  return ITEM;
+ 
 }
 
 
@@ -87,14 +94,15 @@ module.exports.post = post;
  
 async function put(req, res, next) {
   try {
-    let client = getItemFromUpdate(req);
+    let ITEM = getItemFromUpdate(req);
+    console.log(ITEM)
 
-    client.ID = parseInt(req.params.id, 10);
-    console.log(client.ID)
-    client = await itens.update(client);
+    ITEM.ID = parseInt(req.params.id, 10);
+    
+    ITEM = await itens.update(ITEM);
 
-    if (client !== null) {
-      res.status(200).json(client);
+    if (ITEM !== null) {
+      res.status(200).json(ITEM);
     } else {
       res.status(404).end();
     }
@@ -105,12 +113,12 @@ async function put(req, res, next) {
 
 module.exports.put = put;
 
-/*
+
 async function del(req, res, next) {
   try {
     const id = parseInt(req.params.id, 10);
 
-    const success = await employees.delete(id);
+    const success = await itens.delete(id);
 
     if (success) {
       res.status(204).end();
@@ -124,4 +132,3 @@ async function del(req, res, next) {
 
 module.exports.delete = del;
 
-*/
