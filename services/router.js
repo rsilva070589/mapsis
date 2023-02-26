@@ -9,6 +9,7 @@ const { body, validationResult} = require('express-validator');
  
 
 const maxImagens   = require('../controllers/maxxImagens.js'); 
+const maxPedidos   = require('../controllers/maxxPedidos.js'); 
 const maxItens   = require('../controllers/maxxItens.js'); 
 const maxItensTipo   = require('../controllers/maxxItensTipo.js'); 
 const clientes   = require('../controllers/clientes.js');
@@ -158,6 +159,30 @@ router.route('/itens/:id?')
           }
    ,maxItens.post
   );
+
+
+  router.route('/pedidos/:id?')
+  .get(maxPedidos.get)
+  .put(maxPedidos.put)
+  .delete(maxPedidos.delete)
+  .post(
+    [
+  
+      body("COD_CLIENTE").notEmpty().withMessage("Informe  COD_CLIENTE"),
+      body("CASA").notEmpty().withMessage("Informe CASA"), 
+      body("EMPREENDIMENTO").notEmpty().withMessage("Informe  EMPREENDIMENTO"),
+      body("VALOR").notEmpty().withMessage("Informe  VALOR")
+   
+    ],
+    (req, res, next) => {    
+             const errors = validationResult(req);  
+             if(!errors.isEmpty()){
+               return res.status(400).json({errors: errors.array()});
+             }  
+             return next();
+            }
+     ,maxPedidos.post
+    );
 
 router.route('/itensTipo/:id?')
 .get(maxItensTipo.get)
