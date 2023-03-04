@@ -7,7 +7,8 @@ var cors = require('cors');
 router.use(bodyParser.json()).use(cors());
 const { body, validationResult} = require('express-validator'); 
  
-
+const mercadoProdutos = require('../controllers/mercadoProdutos.js'); 
+const mercadoVendas = require('../controllers/mercadoVendas.js'); 
 const maxImagens   = require('../controllers/maxxImagens.js'); 
 const maxPedidos   = require('../controllers/maxxPedidos.js'); 
 const maxItens   = require('../controllers/maxxItens.js'); 
@@ -191,6 +192,51 @@ router.route('/imagens/:id?')
 .get(maxImagens.get)
 
 
+
+router.route('/mercadovendas/:id?')
+.get(mercadoVendas.get)
+.put(mercadoVendas.put)
+.delete(mercadoVendas.delete)
+.post(
+  [
+    body("COD_CLIENTE").notEmpty().withMessage("Informe  COD_CLIENTE"),
+    body("COD_ENDERECO").notEmpty().withMessage("Informe COD_ENDERECO"),
+    body("VALOR").notEmpty().withMessage("Informe  VALOR")
+ 
+  ],
+  (req, res, next) => {    
+           const errors = validationResult(req);  
+           if(!errors.isEmpty()){
+             return res.status(400).json({errors: errors.array()});
+           }  
+           return next();
+          }
+   ,mercadoVendas.post
+  );
+
+
+  router.route('/mercadoprodutos/:id?')
+.get(mercadoProdutos.get)
+.put(mercadoProdutos.put)
+.delete(mercadoProdutos.delete)
+.post(
+  [
+    body("CATEGORIA").notEmpty().withMessage("Informe  CATEGORIA"),
+    body("CODIGO_BARRAS").notEmpty().withMessage("Informe  CODIGO_BARRAS"),
+    body("NOME").notEmpty().withMessage("Informe  NOME"), 
+    body("VALOR").notEmpty().withMessage("Informe  VALOR"),
+    body("VALOR_CUSTO").notEmpty().withMessage("Informe VALOR_CUSTO"), 
+ 
+  ],
+  (req, res, next) => {    
+           const errors = validationResult(req);  
+           if(!errors.isEmpty()){
+             return res.status(400).json({errors: errors.array()});
+           }  
+           return next();
+          }
+   ,mercadoProdutos.post
+  );
  
     
   ;

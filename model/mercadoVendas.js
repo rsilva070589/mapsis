@@ -4,17 +4,21 @@ const database = require('../services/database.js');
 const baseQuery =
  `select
   *
-  from vwnewmaxx_pedidos
+  from vwmercado_vendas
   where 1=1
   `;
 
   const baseQueryVendaItens =
   `select
     *
-    from NEWMAXX_PEDIDOS_ITENS
-    where 1=1  
+    from mercado_vendas_itens
+    where 1=1 
+    
+    
     `;
      
+  
+  
 
 const sortableColumns = ['ID'];
 
@@ -23,18 +27,14 @@ async function find(context) {
   const binds = {};
 
   if (context.id) {
-    binds.employee_id = context.id;
- 
+    binds.employee_id = context.id; 
     query += '\nand ID = :employee_id';
-  }
-
-
+  } 
  
   if (context.sort === undefined) {
     query += '\norder by ID asc';
   } else {
-    let [column, order] = context.sort.split(':');
- 
+    let [column, order] = context.sort.split(':'); 
     if (!sortableColumns.includes(column)) {
       throw new Error('Invalid "sort" column');
     }
@@ -51,8 +51,7 @@ async function find(context) {
   }
 
   if (context.skip) {
-    binds.row_offset = context.skip;
-
+    binds.row_offset = context.skip; 
     query += '\noffset :row_offset rows';
   }
 
@@ -62,19 +61,18 @@ async function find(context) {
 
   query += '\nfetch next :row_limit rows only';
 
-  const result = await database.simpleExecute(query, binds);
-/////////////////////////////
+  const result = await database.simpleExecute(query, binds);  
 
-const arrayVendas = []
+
+  const arrayVendas = []
 
   async function getItens (ID) { 
       const vendaItens =  await database.simpleExecute(baseQueryVendaItens)   
-       return vendaItens.rows     
-       
+       return vendaItens.rows      
       }
 
   const arrayTodosItens = (await getItens())
-      console.log(arrayTodosItens)
+
 
     async function getItens2 (){
       const arrayTodos = [] 
@@ -83,20 +81,18 @@ const arrayVendas = []
       result.rows.map( async t => {   
         const todo = {
           ID: t.ID,
-          NOME: t.NOME,
           COD_CLIENTE: t.COD_CLIENTE,
-          CASA: t.CASA,
-          EMPREENDIMENTO: t.EMPREENDIMENTO,
+          COD_ENDERECO: t.COD_ENDERECO,
+          VALOR: t.VALOR,
           DESCONTO: t.DESCONTO,
-          DATA: t.DATA,  
-          STATUS: t.STATUS,
+          DATA: t.DATA,
+          STATUS: t.STATUS,  
           OBSERVACAO: t.OBSERVACAO,
-          ITENS: arrayTodosItens.filter(x => x.ID_PEDIDO==t.ID)
+          ITENS: arrayTodosItens.filter(x => x.ID_VENDA==t.ID)
         }
          
       
         arrayTodos.push(todo)  
-      //  console.log(arrayTodos)
       
       })   
       return arrayTodos
@@ -105,35 +101,29 @@ const arrayVendas = []
 
  
  
-  return arrayVendas[0]
+  return arrayVendas
+
+
 }
 
-
-
-
-
-
+ 
 
 module.exports.find = find;
  
-  const createSqlPedido=`
-  insert into NEWMAXX_PEDIDOS(
-    ID
-    ,NOME
+  const createSqlVendas=`
+  insert into MERCADO_VENDAS(
+    ID 
     ,COD_CLIENTE
-    ,CASA
-    ,EMPREENDIMENTO
+    ,COD_ENDERECO
     ,VALOR
     ,DESCONTO
     ,DATA
     ,STATUS
     ,OBSERVACAO
     ) values (
-    :ID
-    ,:NOME
+    :ID 
     ,:COD_CLIENTE
-    ,:CASA
-    ,:EMPREENDIMENTO
+    ,:COD_ENDERECO 
     ,:VALOR
     ,:DESCONTO
     ,SYSDATE
@@ -141,13 +131,14 @@ module.exports.find = find;
     ,:OBSERVACAO
     )`
 
-    const createSqlPedidoItens=`
-    insert into NEWMAXX_PEDIDOS_ITENS(
-      ID_PEDIDO
-     ,COD_ITEM
+    const createSqlVendasItens=`
+    insert into mercado_vendas_itens(
+      ID_VENDA
+     ,COD_PRODUTO
+     ,QTDE
      ,VALOR
      ,DESCONTO
-     ) values ( :ID,:COD_ITEM,:VALOR,:DESCONTO )`
+     ) values ( :ID,:COD_PRODUTO,:QTDE,:VALOR,:DESCONTO )`
  
  
 
@@ -158,7 +149,7 @@ async function create(emp) {
   let SEQUENCIA_PEDIDO = null
  
   async function getSequenciaPedido() {
-    const SqlNumeracaoOSAgenda = `SELECT NEWMAXX_PEDIDOS_SEQ1.NEXTVAL SEQUENCIA_PEDIDO FROM DUAL`
+    const SqlNumeracaoOSAgenda = `SELECT MERCADO_ID_VENDAS.NEXTVAL SEQUENCIA_PEDIDO FROM DUAL`
     const result   = await database.simpleExecute(SqlNumeracaoOSAgenda)  
     const sequencia = result.rows[0]['SEQUENCIA_PEDIDO']
     console.log(sequencia)
@@ -167,13 +158,11 @@ async function create(emp) {
   
    SEQUENCIA_PEDIDO = await getSequenciaPedido()
 
-  const cliente_diverso = await database.simpleExecute(createSqlPedido, 
+  const vendasGeral = await database.simpleExecute(createSqlVendas, 
                                                       [ 
-                                                        SEQUENCIA_PEDIDO,
-                                                        ITEM.NOME,
+                                                        SEQUENCIA_PEDIDO, 
                                                         ITEM.COD_CLIENTE,
-                                                        ITEM.CASA,
-                                                        ITEM.EMPREENDIMENTO,
+                                                        ITEM.COD_ENDERECO,                                                         
                                                         ITEM.VALOR,
                                                         ITEM.DESCONTO,
                                                         ITEM.OBSERVACAO
@@ -182,34 +171,24 @@ async function create(emp) {
 
 
    
-   async function postItens (codItem, valor,desconto) {
-    const teste =  await database.simpleExecute(createSqlPedidoItens,[SEQUENCIA_PEDIDO,codItem, valor,desconto], { autoCommit: true });
+   async function postItens (codItem,qtde, valor,desconto) {
+    const teste =  await database.simpleExecute(createSqlVendasItens,[SEQUENCIA_PEDIDO,codItem,qtde,valor,desconto], { autoCommit: true });
     }
-   
  
-      ITEM.ITENS.map(  x => {
-        const itens = Object.assign({}, x);
-        console.log(x)
-        postItens(itens.COD_ITEM, itens.VALOR, itens.DESCONTO)
-
-       
-      })
-
     
-    
-    
-
-  } 
  
-
+  ITEM.ITENS.map(  x => {
+    const itens = Object.assign({}, x);
+    console.log(x)
+    postItens(itens.COD_PRODUTO,itens.QTDE, itens.VALOR, itens.DESCONTO) 
+  }) 
+}
 module.exports.create = create;
                            
 const updateSql =
- `update NEWMAXX_PEDIDOS
-  set 
-  NOME            = :NOME,  
-  CASA            = :CASA,
-  EMPREENDIMENTO  = :EMPREENDIMENTO,
+ `update MERCADO_VENDAS
+  set  
+  COD_ENDERECO    = :COD_ENDERECO, 
   VALOR           = :VALOR,
   DESCONTO        = :DESCONTO,
   OBSERVACAO      = :OBSERVACAO,
@@ -229,7 +208,7 @@ module.exports.update = update;
 
 
 const deleteSql =
- `delete from NEWMAXX_PEDIDOS
+ `delete from MERCADO_VENDAS
  where ID = :ID
  `;
 
@@ -241,5 +220,5 @@ async function del(id) {
 
   return binds;
 }
-
+ 
 module.exports.delete = del;

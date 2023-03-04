@@ -8,7 +8,7 @@ const baseQuery =
   where 1=1
   `;
 
-const sortableColumns = ['AMBIENTE'];
+const sortableColumns = ['AMBIENTE','SEQUENCIA'];
 
 async function find(context) {
   let query = baseQuery;
@@ -23,7 +23,7 @@ async function find(context) {
 
  
   if (context.sort === undefined) {
-    query += '\norder by AMBIENTE asc';
+    query += '\norder by SEQUENCIA asc';
   } else {
     let [column, order] = context.sort.split(':');
  
