@@ -105,7 +105,7 @@ async function del(req, res, next) {
   try {
     const id = parseInt(req.params.id, 10);
 
-    const success = await pedido.delete(id);
+    const success = await itens.delete(id);
 
     if (success) {
       res.status(204).end();

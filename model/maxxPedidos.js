@@ -91,6 +91,7 @@ const arrayVendas = []
           DATA: t.DATA,  
           STATUS: t.STATUS,
           OBSERVACAO: t.OBSERVACAO,
+          VALOR: t.VALOR,
           ITENS: arrayTodosItens.filter(x => x.ID_PEDIDO==t.ID)
         }
          
@@ -107,13 +108,7 @@ const arrayVendas = []
  
   return arrayVendas[0]
 }
-
-
-
-
-
-
-
+  
 module.exports.find = find;
  
   const createSqlPedido=`
@@ -158,14 +153,21 @@ async function create(emp) {
   let SEQUENCIA_PEDIDO = null
  
   async function getSequenciaPedido() {
-    const SqlNumeracaoOSAgenda = `SELECT NEWMAXX_PEDIDOS_SEQ1.NEXTVAL SEQUENCIA_PEDIDO FROM DUAL`
-    const result   = await database.simpleExecute(SqlNumeracaoOSAgenda)  
-    const sequencia = result.rows[0]['SEQUENCIA_PEDIDO']
-    console.log(sequencia)
-    return sequencia
-   }
+    if (1==2) {
+      const SqlNumeracaoOSAgenda = `SELECT NEWMAXX_PEDIDOS_SEQ1.NEXTVAL SEQUENCIA_PEDIDO FROM DUAL`
+      const result   = await database.simpleExecute(SqlNumeracaoOSAgenda)  
+      const sequencia = result.rows[0]['SEQUENCIA_PEDIDO']
+      console.log(sequencia)
+      return sequencia
+    }else{
+          return 40
+    }
   
+   }
+ 
    SEQUENCIA_PEDIDO = await getSequenciaPedido()
+
+ 
 
   const cliente_diverso = await database.simpleExecute(createSqlPedido, 
                                                       [ 
@@ -233,12 +235,18 @@ const deleteSql =
  where ID = :ID
  `;
 
+ const deleteSqlitens =
+ `delete from newmaxx_pedidos_itens
+  where ID_PEDIDO = :ID
+ `;
+ 
+
 async function del(id) {
   const binds = {
     id: id
   };
-  const result = await database.simpleExecute(deleteSql, binds, { autoCommit: true });
-
+  const result = await database.simpleExecute(deleteSql, binds, { autoCommit: true }); 
+  const itens  = await database.simpleExecute(deleteSqlitens, binds, { autoCommit: true }); 
   return binds;
 }
 
