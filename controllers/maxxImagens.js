@@ -1,4 +1,4 @@
-const itens = require('../model/maxxImagens');
+const imagens = require('../model/maxxImagens');
 
 async function get(req, res, next) {
   try {
@@ -9,7 +9,7 @@ async function get(req, res, next) {
     context.limit = parseInt(req.query.limit, 10);
     context.sort = req.query.sort;
 
-    const rows = await itens.find(context);
+    const rows = await imagens.find(context);
 
     if (req.params.id) {
       if (rows.length === 1) {
@@ -28,21 +28,10 @@ async function get(req, res, next) {
 module.exports.get = get;
 
 function getItemFromRec(req) {
-  const ITEM = {
-    ID_ITEM:      req.body.IDITEM,
-    PAVIMENTO:    req.body.PAVIMENTO,
+  const ITEM = { 
+    IMG:          req.body.IMG,
+    SEQUENCIA:    req.body.SEQUENCIA,
     AMBIENTE:     req.body.AMBIENTE,
-    APLICACAO:    req.body.APLICACAO,
-    TIPO:         req.body.TIPO,
-    NOMENCLATURA: req.body.NOMENCLATURA,
-    FORNECEDOR:   req.body.FORNECEDOR,
-    DESCRICAO:    req.body.DESCRICAO,
-    UND:          req.body.UND,
-    QTDE:         req.body.QTDE,
-    VLR_UNITARIO: req.body.VLR_UNITARIO,
-    FRETE:        req.body.FRETE,
-    VLR_MAO_OBRA: req.body.VLR_MAO_OBRA,
-    CONTINGENCIA: req.body.CONTINGENCIA 
   };
 
   return ITEM;
@@ -52,16 +41,9 @@ function getItemFromRec(req) {
 
 function getItemFromUpdate(req) {
   const ClientUP = { 
-    ENDERECO_ELETRONICO: req.body.ENDERECO_ELETRONICO,
-    RUA_RES: req.body.RUA_RES,
-    FACHADA_RES: req.body.FACHADA_RES,
-    COMPLEMENTO_RES: req.body.COMPLEMENTO_RES,
-    BAIRRO_RES: req.body.BAIRRO_RES,
-    COD_CID_RES: req.body.COD_CID_RES,
-    CEP_RES: req.body.CEP_RES,
-    UF_RES: req.body.UF_RES,
-    PREFIXO_CEL: req.body.PREFIXO_CEL,
-    TELEFONE_CEL: req.body.TELEFONE_CEL    
+    IMG:          req.body.IMG,
+    SEQUENCIA:    req.body.SEQUENCIA,
+    AMBIENTE:     req.body.AMBIENTE,
   };
 
   return ClientUP;
@@ -72,7 +54,7 @@ async function post(req, res, next) {
   try {
     let item = getItemFromRec(req);
 
-    item = await itens.create(item);
+    item = await imagens.create(item);
 
     res.status(201).json(item);
   } catch (err) {
@@ -85,11 +67,9 @@ module.exports.post = post;
  
 async function put(req, res, next) {
   try {
-    let client = getItemFromUpdate(req);
-
-    client.ID = parseInt(req.params.id, 10);
-    console.log(client.ID)
-    client = await itens.update(client);
+    let client = getItemFromUpdate(req); 
+     
+    client = await imagens.update(client);
 
     if (client !== null) {
       res.status(200).json(client);
@@ -103,7 +83,7 @@ async function put(req, res, next) {
 
 module.exports.put = put;
 
-/*
+
 async function del(req, res, next) {
   try {
     const id = parseInt(req.params.id, 10);
@@ -122,4 +102,3 @@ async function del(req, res, next) {
 
 module.exports.delete = del;
 
-*/
