@@ -28,7 +28,8 @@ async function get(req, res, next) {
 module.exports.get = get;
 
 function getItemFromRec(req) {
-  const PEDIDO = {        
+  const PEDIDO = { 
+    SEQUENCIA:         req.body.SEQUENCIA,       
     NOME:         req.body.NOME,
     COD_CLIENTE:  req.body.COD_CLIENTE,
     CASA:         req.body.CASA,
@@ -49,6 +50,7 @@ function getItemFromRec(req) {
 
 function getItemFromUpdate(req) {
   const PEDIDO = {        
+    SEQUENCIA:         req.body.SEQUENCIA,  
     NOME:         req.body.NOME,
     COD_CLIENTE:  req.body.COD_CLIENTE,
     CASA:         req.body.CASA,

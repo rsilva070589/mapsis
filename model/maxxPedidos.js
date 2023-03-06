@@ -151,16 +151,18 @@ async function create(emp) {
 
   //NEWMAXX_PEDIDOS_SEQ1
   let SEQUENCIA_PEDIDO = null
+
+  console.log(emp.SEQUENCIA)
  
   async function getSequenciaPedido() {
-    if (1==2) {
+    if (emp.SEQUENCIA == undefined) {
       const SqlNumeracaoOSAgenda = `SELECT NEWMAXX_PEDIDOS_SEQ1.NEXTVAL SEQUENCIA_PEDIDO FROM DUAL`
       const result   = await database.simpleExecute(SqlNumeracaoOSAgenda)  
       const sequencia = result.rows[0]['SEQUENCIA_PEDIDO']
       console.log(sequencia)
       return sequencia
     }else{
-          return 40
+          return emp.SEQUENCIA
     }
   
    }
@@ -198,7 +200,7 @@ async function create(emp) {
       })
 
     
-    
+    return ('Criado com sucesso, ID: ' +SEQUENCIA_PEDIDO)
     
 
   } 
