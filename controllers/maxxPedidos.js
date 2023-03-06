@@ -50,14 +50,7 @@ function getItemFromRec(req) {
 
 function getItemFromUpdate(req) {
   const PEDIDO = {        
-    SEQUENCIA:         req.body.SEQUENCIA,  
-    NOME:         req.body.NOME,
-    COD_CLIENTE:  req.body.COD_CLIENTE,
-    CASA:         req.body.CASA,
-    EMPREENDIMENTO: req.body.EMPREENDIMENTO,
-    VALOR:        req.body.VALOR,
-    DESCONTO:     req.body.DESCONTO,
-    DATA:         req.body.DATA,
+    
     STATUS:       req.body.STATUS
   };
 

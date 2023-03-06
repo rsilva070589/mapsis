@@ -210,23 +210,18 @@ module.exports.create = create;
                            
 const updateSql =
  `update NEWMAXX_PEDIDOS
-  set 
-  NOME            = :NOME,  
-  CASA            = :CASA,
-  EMPREENDIMENTO  = :EMPREENDIMENTO,
-  VALOR           = :VALOR,
-  DESCONTO        = :DESCONTO,
-  OBSERVACAO      = :OBSERVACAO,
-  STATUS          = :STATUS
+  set  
+  STATUS  = :STATUS
   where ID = :ID 
   `
   ;
 
 async function update(emp) {
-  console.log(emp)
 
-  const result = await database.simpleExecute(updateSql,emp, { autoCommit: true });
-  return binds;  
+  const pedido = Object.assign({}, emp); 
+
+  const result = await database.simpleExecute(updateSql,pedido,{ autoCommit: true });
+  return pedido;  
 }
 
 module.exports.update = update;
