@@ -1,25 +1,21 @@
 const oracledb = require('oracledb');
 const database = require('../services/database.js');
+ 
 
 const baseQuery =
- `select
-  *
-  from vwmercado_vendas
-  where 1=1
-  `;
-
-  const baseQueryVendaItens =
-  `select
-    *
-    from mercado_vendas_itens
-    where 1=1 
-    
-    
-    `;
-     
-  
-  
-
+ `  select ID,
+ TRUNC(DATA) AS DATA,
+ MES,
+           COD_PRODUTO,
+           NOME,
+           QTDE,
+           VALOR,
+           CUSTO,
+           LUCRO, 
+           PERC_LUCRO 
+    from mercado_venda_itens_lucro 
+    where 1=1   
+  `; 
 const sortableColumns = ['ID'];
 
 async function find(context) {
@@ -27,12 +23,12 @@ async function find(context) {
   const binds = {};
 
   if (context.id) {
-    binds.employee_id = context.id; 
-    query += '\nand ID = :employee_id';
+    binds.id_venda = context.id; 
+    query += '\nand ID = :id_venda';
   } 
  
   if (context.sort === undefined) {
-    query += '\norder by ID asc';
+    query += '\norder by ID desc';
   } else {
     let [column, order] = context.sort.split(':'); 
     if (!sortableColumns.includes(column)) {
@@ -61,49 +57,48 @@ async function find(context) {
 
   query += '\nfetch next :row_limit rows only';
 
-  const result = await database.simpleExecute(query, binds);  
+  const result = await database.simpleExecute(query, binds);   
+ 
+  const arrayVendaLista = []
 
 
-  const arrayVendas = []
+function dataAtualFormatada(dataFormat){
+  var data = dataFormat,
+      dia  = data.getDate().toString(),
+      diaF = (dia.length == 1) ? '0'+dia : dia,
+      mes  = (data.getMonth()+1).toString(), //+1 pois no getMonth Janeiro começa com zero.
+      mesF = (mes.length == 1) ? '0'+mes : mes,
+      anoF = data.getFullYear();
+  return diaF+"/"+mesF+"/"+anoF;
+}
 
-  async function getItens (ID) { 
-      const vendaItens =  await database.simpleExecute(baseQueryVendaItens)   
-       return vendaItens.rows      
+var arredonda = function(numero, casasDecimais) {
+  casasDecimais = typeof casasDecimais !== 'undefined' ?  casasDecimais : 2;
+  return +(Math.floor(numero + ('e+' + casasDecimais)) + ('e-' + casasDecimais));
+};
+
+  async function ajustandoLista () {
+    result.rows.map(x => {
+      const vendasLista = {
+        "ID": x.ID,
+        "DATA": dataAtualFormatada(x.DATA),
+        "MES": x.MES,
+        "COD_PRODUTO": x.COD_PRODUTO,
+        "NOME": x.NOME,
+        "QTDE": x.QTDE,
+        "VALOR": arredonda(x.VALOR,2),
+        "CUSTO": arredonda(x.CUSTO, 2),
+        "LUCRO": arredonda(x.LUCRO,2),
+        "PERC_LUCRO": arredonda(x.PERC_LUCRO,2),
       }
+      arrayVendaLista.push(vendasLista)
+    })
+  }
 
-  const arrayTodosItens = (await getItens())
-
-
-    async function getItens2 (){
-      const arrayTodos = [] 
-    
-  
-      result.rows.map( async t => {   
-        const todo = {
-          ID: t.ID,
-          COD_CLIENTE: t.COD_CLIENTE,
-          COD_ENDERECO: t.COD_ENDERECO,
-          VALOR: t.VALOR,
-          DESCONTO: t.DESCONTO,
-          DATA: t.DATA,
-          STATUS: t.STATUS,  
-          OBSERVACAO: t.OBSERVACAO,
-          ITENS: arrayTodosItens.filter(x => x.ID_VENDA==t.ID)
-        }
-         
-      
-        arrayTodos.push(todo)  
-      
-      })   
-      return arrayTodos
-    }
-    arrayVendas.push(await getItens2())   
-
+  ajustandoLista()
  
  
-  return arrayVendas
-
-
+return arrayVendaLista
 }
 
  

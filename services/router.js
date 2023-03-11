@@ -7,6 +7,7 @@ var cors = require('cors');
 router.use(bodyParser.json()).use(cors());
 const { body, validationResult} = require('express-validator'); 
  
+const mercadoMigracao = require('../controllers/mercadoMigracao.js'); 
 const mercadoProdutos = require('../controllers/mercadoProdutos.js'); 
 const mercadoVendas = require('../controllers/mercadoVendas.js'); 
 const maxImagens   = require('../controllers/maxxImagens.js'); 
@@ -255,6 +256,26 @@ router.route('/mercadovendas/:id?')
            return next();
           }
    ,mercadoProdutos.post
+  );
+
+  router.route('/mercadomigracao')
+.post(
+  [
+    body("DATA_OLD").notEmpty().withMessage("Informe  DATA_OLD"),
+    body("ID").notEmpty().withMessage("Informe  ID"),
+    body("COD_CLIENTE").notEmpty().withMessage("Informe  COD_CLIENTE"),
+    body("COD_ENDERECO").notEmpty().withMessage("Informe COD_ENDERECO"),
+    body("VALOR").notEmpty().withMessage("Informe  VALOR")
+ 
+  ],
+  (req, res, next) => {    
+           const errors = validationResult(req);  
+           if(!errors.isEmpty()){
+             return res.status(400).json({errors: errors.array()});
+           }  
+           return next();
+          }
+   ,mercadoMigracao.post
   );
  
     
