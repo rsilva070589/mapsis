@@ -57,7 +57,6 @@ async function find(context) {
 
 
 }
-
  
 
 module.exports.find = find;
@@ -72,6 +71,7 @@ module.exports.find = find;
     ,SITUACAO
     ,VALOR
     ,VALOR_CUSTO
+    ,QTDE_ESTOQUE
     ) values (
     :CATEGORIA 
     ,:CODIGO_BARRAS
@@ -81,6 +81,7 @@ module.exports.find = find;
     ,:SITUACAO
     ,:VALOR
     ,:VALOR_CUSTO
+    ,:QTDE_ESTOQUE
     )`
  
 
@@ -95,7 +96,8 @@ async function create(emp) {
                                                         ITEM.NOME,
                                                         ITEM.SITUACAO,
                                                         ITEM.VALOR,
-                                                        ITEM.VALOR_CUSTO 
+                                                        ITEM.VALOR_CUSTO,
+                                                        ITEM.QTDE_ESTOQUE
                                                       ]
                                                       , { autoCommit: true });
 
@@ -114,7 +116,8 @@ const updateSql =
   NOME          = :NOME,
   SITUACAO      = :SITUACAO,
   VALOR         = :VALOR,
-  VALOR_CUSTO   = :VALOR_CUSTO
+  VALOR_CUSTO   = :VALOR_CUSTO,
+  QTDE_ESTOQUE  = :QTDE_ESTOQUE
   where ID      = :ID 
   `
   ;
@@ -131,7 +134,9 @@ async function update(emp) {
                                                               ITEM.SITUACAO,
                                                               ITEM.VALOR,
                                                               ITEM.VALOR_CUSTO,
-                                                              ITEM.ID
+                                                              ITEM.QTDE_ESTOQUE,
+                                                              ITEM.ID,
+                                                              
                                                         ], { autoCommit: true });
   return ITEM;  
 }

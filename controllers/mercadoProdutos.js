@@ -29,15 +29,16 @@ module.exports.get = get;
 
 function getItemFromRec(req) {
   const PRODUTOS = {  
-    ID:  req.body.ID,         
-    CATEGORIA:  req.body.CATEGORIA,
-    CODIGO_BARRAS: req.body.CODIGO_BARRAS,    
-    DESCRICAO:  req.body.DESCRICAO,    
-    FOTO:       req.body.FOTO,
-    NOME:       req.body.NOME,
-    SITUACAO:   req.body.SITUACAO,
-    VALOR:      req.body.VALOR,
-    VALOR_CUSTO: req.body.VALOR_CUSTO
+    ID:             req.body.ID,         
+    CATEGORIA:      req.body.CATEGORIA,
+    CODIGO_BARRAS:  req.body.CODIGO_BARRAS,    
+    DESCRICAO:      req.body.DESCRICAO,    
+    FOTO:           req.body.FOTO,
+    NOME:           req.body.NOME,
+    SITUACAO:       req.body.SITUACAO,
+    VALOR:          req.body.VALOR,
+    VALOR_CUSTO:    req.body.VALOR_CUSTO,
+    QTDE_ESTOQUE:   req.body.QTDE_ESTOQUE
   };
 
   console.log(PRODUTOS)
@@ -57,7 +58,8 @@ function getItemFromUpdate(req) {
     NOME:       req.body.NOME,
     SITUACAO:   req.body.SITUACAO,
     VALOR:      req.body.VALOR,
-    VALOR_CUSTO: req.body.VALOR_CUSTO
+    VALOR_CUSTO: req.body.VALOR_CUSTO,
+    QTDE_ESTOQUE:   req.body.QTDE_ESTOQUE
   };
 
   return PRODUTOS;
