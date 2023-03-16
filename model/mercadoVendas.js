@@ -132,7 +132,8 @@ module.exports.find = find;
      ,QTDE
      ,VALOR
      ,DESCONTO
-     ) values ( :ID,:COD_PRODUTO,:QTDE,:VALOR,:DESCONTO )`
+     ,CUSTO
+     ) values ( :ID,:COD_PRODUTO,:QTDE,:VALOR,:DESCONTO, :CUSTO )`
  
   const historico_kardex = `
   INSERT INTO MERCADO_PRODUTOS_KARDEX (COD_ITEM,QTDE_ANTERIOR,QTDE_ATUAL,ID_VENDA,CODIGO_BARRAS)
@@ -190,6 +191,19 @@ async function create(emp) {
   
    SEQUENCIA_PEDIDO = await getSequenciaPedido()
 
+   //NEWMAXX_PEDIDOS_SEQ1
+  let ItemCusto = null || 0
+ 
+  async function getCustoItem(codigoBarras) {
+    const SqlNumeracaoOSAgenda = `SELECT VALOR_CUSTO FROM MERCADO_PRODUTOS WHERE CODIGO_BARRAS = :CODIGO_BARRAS`
+    const result   = await database.simpleExecute(SqlNumeracaoOSAgenda, [codigoBarras])  
+    const sequencia = result.rows[0]['VALOR_CUSTO']
+    console.log(sequencia)
+    return sequencia
+   } 
+  
+   
+
   const vendasGeral = await database.simpleExecute(createSqlVendas, 
                                                       [ 
                                                         SEQUENCIA_PEDIDO, 
@@ -197,13 +211,14 @@ async function create(emp) {
                                                         ITEM.COD_ENDERECO,                                                         
                                                         ITEM.VALOR,
                                                         ITEM.DESCONTO,
-                                                        ITEM.OBSERVACAO
+                                                        ITEM.OBSERVACAO                                                         
                                                       ]
                                                       , { autoCommit: true });
  
    
    async function postItens (codItem,qtde, valor,desconto) {
-    const teste =  await database.simpleExecute(createSqlVendasItens,[SEQUENCIA_PEDIDO,codItem,qtde,valor,desconto], { autoCommit: true });
+    ItemCusto = await getCustoItem(codItem)
+    const teste =  await database.simpleExecute(createSqlVendasItens,[SEQUENCIA_PEDIDO,codItem,qtde,valor,desconto,ItemCusto], { autoCommit: true });
     }
 
 
@@ -214,9 +229,7 @@ async function create(emp) {
   
     postItens(itens.COD_PRODUTO,itens.QTDE, itens.VALOR, itens.DESCONTO)  
     historicoKardex(itens.COD_PRODUTO,itens.QTDE,SEQUENCIA_PEDIDO)
-    updateItens(itens.COD_PRODUTO, itens.QTDE, SEQUENCIA_PEDIDO)
-    
-   
+    updateItens(itens.COD_PRODUTO, itens.QTDE, SEQUENCIA_PEDIDO) 
 
   }) 
 }
