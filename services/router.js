@@ -6,14 +6,15 @@ var cors = require('cors');
 
 router.use(bodyParser.json()).use(cors());
 const { body, validationResult} = require('express-validator'); 
- 
+
+const mercadoDemanda = require('../controllers/mercadoDemanda.js'); 
 const mercadoMigracao = require('../controllers/mercadoMigracao.js'); 
 const mercadoProdutos = require('../controllers/mercadoProdutos.js'); 
 const mercadoVendas = require('../controllers/mercadoVendas.js'); 
-const maxImagens   = require('../controllers/maxxImagens.js'); 
-const maxPedidos   = require('../controllers/maxxPedidos.js'); 
-const maxItens   = require('../controllers/maxxItens.js'); 
-const maxItensTipo   = require('../controllers/maxxItensTipo.js'); 
+const maxImagens    = require('../controllers/maxxImagens.js'); 
+const maxPedidos    = require('../controllers/maxxPedidos.js'); 
+const maxItens      = require('../controllers/maxxItens.js'); 
+const maxItensTipo  = require('../controllers/maxxItensTipo.js'); 
 const clientes   = require('../controllers/clientes.js');
 const modelos    = require('../controllers/modelos.js');
 const servicos   = require('../controllers/servicos.js');
@@ -234,6 +235,9 @@ router.route('/mercadovendas/:id?')
    ,mercadoVendas.post
   );
 
+
+  router.route('/mercadodemanda/:id?')
+.get(mercadoDemanda.get)
 
   router.route('/mercadoprodutos/:id?')
 .get(mercadoProdutos.get)
