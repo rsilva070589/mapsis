@@ -7,6 +7,7 @@ var cors = require('cors');
 router.use(bodyParser.json()).use(cors());
 const { body, validationResult} = require('express-validator'); 
 
+const mercadoCompras = require('../controllers/mercadoCompras.js'); 
 const mercadoDemanda = require('../controllers/mercadoDemanda.js'); 
 const mercadoMigracao = require('../controllers/mercadoMigracao.js'); 
 const mercadoProdutos = require('../controllers/mercadoProdutos.js'); 
@@ -261,6 +262,29 @@ router.route('/mercadovendas/:id?')
           }
    ,mercadoProdutos.post
   );
+
+
+  router.route('/mercadocompras/:id?')
+  .get(mercadoCompras.get) 
+  .post(
+    [
+      body("NOTA").notEmpty().withMessage("Informe  NOTA"),
+      body("DATA_EMISSAO").notEmpty().withMessage("Informe  DATA_EMISSAO"),
+      body("FORNECEDOR").notEmpty().withMessage("Informe  FORNECEDOR"), 
+      body("TOTAL_NOTA").notEmpty().withMessage("Informe  TOTAL_NOTA"),
+      body("ITENS").notEmpty().withMessage("Informe ITENS"),   
+    ],
+    (req, res, next) => {    
+             const errors = validationResult(req);  
+             if(!errors.isEmpty()){
+               return res.status(400).json({errors: errors.array()});
+             }  
+             return next();
+            }
+     ,mercadoCompras.post
+    );
+
+
 
   router.route('/mercadomigracao')
 .post(

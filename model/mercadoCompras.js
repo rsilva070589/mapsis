@@ -104,44 +104,39 @@ return arrayVendaLista
 
 module.exports.find = find;
  
-  const createSqlVendas=`
-  insert into MERCADO_VENDAS(
-    ID 
-    ,COD_CLIENTE
-    ,COD_ENDERECO
-    ,VALOR
-    ,DESCONTO
-    ,DATA
-    ,STATUS
-    ,OBSERVACAO
-    ) values (
-    :ID 
-    ,:COD_CLIENTE
-    ,:COD_ENDERECO 
-    ,:VALOR
-    ,:DESCONTO
+  const createSqlCompras=`
+  insert into MERCADO_COMPRAS(
+     ID_COMPRA 
+    ,NOTA
+    ,DATA_EMISSAO
+    ,DATA_ENTRADA
+    ,FORNECEDOR
+    ,TOTAL_NOTA 
+    )
+     values (
+     :ID_COMPRA 
+    ,:NOTA
+    ,:DATA_EMISSAO 
     ,SYSDATE - 0.3
-    ,1
-    ,:OBSERVACAO
+    ,:FORNECEDOR
+    ,:TOTAL_NOTA 
     )`
 
-    const createSqlVendasItens=`
-    insert into mercado_vendas_itens(
-      ID_VENDA
+    const createSqlComprasItens=`
+    insert into MERCADO_COMPRAS_ITENS(
+      ID_COMPRA
      ,COD_PRODUTO
      ,QTDE
-     ,VALOR
-     ,DESCONTO
-     ,CUSTO
-     ) values ( :ID,:COD_PRODUTO,:QTDE,:VALOR,:DESCONTO, :CUSTO )`
+     ,VALOR_ITENS 
+     ) values ( :ID_COMPRA,:COD_PRODUTO,:QTDE,:VALOR_ITENS)`
  
   const historico_kardex = `
-  INSERT INTO MERCADO_PRODUTOS_KARDEX (COD_ITEM,QTDE_ANTERIOR,QTDE_ATUAL,ID_VENDA,CODIGO_BARRAS)
-                            VALUES    (:COD_ITEM,:QTDE_ANTERIOR,:QTDE_ATUAL,:ID_VENDA,:CODIGO_BARRAS)
+  INSERT INTO MERCADO_PRODUTOS_KARDEX (COD_ITEM,QTDE_ANTERIOR,QTDE_ATUAL,ID_VENDA,CODIGO_BARRAS,TIPO)
+                            VALUES    (:COD_ITEM,:QTDE_ANTERIOR,:QTDE_ATUAL,:ID_VENDA,:CODIGO_BARRAS,'COMPRA')
   `
 
   const updateQtdeItens = `
-  update  mercado_produtos set qtde_estoque = :QTDE_ATUAL
+  update  mercado_produtos set qtde_estoque = :QTDE_ATUAL, valor_custo = :CUSTO
   where id = :ID_ITEM
   `
 
@@ -149,24 +144,30 @@ module.exports.find = find;
 let ITEM_QTDE = null
 
 async function getQtdeitem(cod_produto) {
-  const SqlNumeracaoOSAgenda = ` select id, nvl(qtde_estoque,0)qtde_estoque FROM mercado_produtos
+  const SqlGetItem = ` select id, nvl(qtde_estoque,0)qtde_estoque,valor_custo FROM mercado_produtos
                                  where CODIGO_BARRAS = :CODIGO_BARRAS`
-  const result   = await database.simpleExecute(SqlNumeracaoOSAgenda, [cod_produto])  
+  const result   = await database.simpleExecute(SqlGetItem, [cod_produto])  
   const sequencia = result.rows[0] 
   return sequencia
  }
  
-async function historicoKardex (codBarras,qtde_venda,ID_VENDA) { 
-  resultItens = await getQtdeitem(codBarras)  
-  var qtdeFinal = resultItens.QTDE_ESTOQUE-qtde_venda
-  const result = await database.simpleExecute(historico_kardex, [resultItens.ID,resultItens.QTDE_ESTOQUE,qtdeFinal,ID_VENDA,codBarras], { autoCommit: true })
+async function historicoKardex (codBarras,qtde_compra,ID_COMPRA) { 
+  resultItens = await getQtdeitem(codBarras)
+  var qtdeFinal = resultItens.QTDE_ESTOQUE+qtde_compra
+  const result = await database.simpleExecute(historico_kardex, [resultItens.ID,resultItens.QTDE_ESTOQUE,qtdeFinal,ID_COMPRA,codBarras], { autoCommit: true })
 }
 
-  async function updateItens (codBarras, qtde_venda, idvenda){
+ 
+
+  async function updateItens (codBarras, qtde_compra,total){
+ 
     resultItens = await getQtdeitem(codBarras) 
-    var qtdeFinal = resultItens.QTDE_ESTOQUE-qtde_venda
+    var qtdeFinal   = resultItens.QTDE_ESTOQUE+qtde_compra
+    var custo       = total / qtde_compra
+    console.log('o custo atual é: '+custo)
+
     console.log('qtde Agora é '+ qtdeFinal)
-     await database.simpleExecute(updateQtdeItens, [qtdeFinal, resultItens.ID] ,{ autoCommit: true })
+     await database.simpleExecute(updateQtdeItens, [qtdeFinal, custo, resultItens.ID] ,{ autoCommit: true })
       
   }
 
@@ -182,7 +183,7 @@ async function create(emp) {
   let SEQUENCIA_PEDIDO = null
  
   async function getSequenciaPedido() {
-    const SqlNumeracaoOSAgenda = `SELECT MERCADO_ID_VENDAS.NEXTVAL SEQUENCIA_PEDIDO FROM DUAL`
+    const SqlNumeracaoOSAgenda = `SELECT MERCADO_COMPRAS_SEQ.NEXTVAL SEQUENCIA_PEDIDO FROM DUAL`
     const result   = await database.simpleExecute(SqlNumeracaoOSAgenda)  
     const sequencia = result.rows[0]['SEQUENCIA_PEDIDO']
     console.log(sequencia)
@@ -194,42 +195,34 @@ async function create(emp) {
    //NEWMAXX_PEDIDOS_SEQ1
   let ItemCusto = null || 0
  
-  async function getCustoItem(codigoBarras) {
-    const SqlNumeracaoOSAgenda = `SELECT VALOR_CUSTO FROM MERCADO_PRODUTOS WHERE CODIGO_BARRAS = :CODIGO_BARRAS`
-    const result   = await database.simpleExecute(SqlNumeracaoOSAgenda, [codigoBarras])  
-    const sequencia = result.rows[0]['VALOR_CUSTO']
-    console.log(sequencia)
-    return sequencia
-   } 
+
   
    
 
-  const vendasGeral = await database.simpleExecute(createSqlVendas, 
+  const vendasGeral = await database.simpleExecute(createSqlCompras, 
                                                       [ 
                                                         SEQUENCIA_PEDIDO, 
-                                                        ITEM.COD_CLIENTE,
-                                                        ITEM.COD_ENDERECO,                                                         
-                                                        ITEM.VALOR,
-                                                        ITEM.DESCONTO,
-                                                        ITEM.OBSERVACAO                                                         
+                                                        ITEM.NOTA,
+                                                        ITEM.DATA_EMISSAO,                                                         
+                                                        ITEM.FORNECEDOR,
+                                                        ITEM.TOTAL_NOTA                                                      
                                                       ]
                                                       , { autoCommit: true });
  
    
-   async function postItens (codItem,qtde, valor,desconto) {
-    ItemCusto = await getCustoItem(codItem)
-    const teste =  await database.simpleExecute(createSqlVendasItens,[SEQUENCIA_PEDIDO,codItem,qtde,valor,desconto,ItemCusto], { autoCommit: true });
+   async function postItens (codItem,qtde, valor) { 
+    const teste =  await database.simpleExecute(createSqlComprasItens,[SEQUENCIA_PEDIDO,codItem,qtde,valor], { autoCommit: true });
     }
 
-
-
+ 
+ 
      
   ITEM.ITENS.map(  x => {
     const itens = Object.assign({}, x);
   
-    postItens(itens.COD_PRODUTO,itens.QTDE, itens.VALOR, itens.DESCONTO)  
-    historicoKardex(itens.COD_PRODUTO,itens.QTDE,SEQUENCIA_PEDIDO)
-    updateItens(itens.COD_PRODUTO, itens.QTDE, SEQUENCIA_PEDIDO) 
+    postItens(      itens.CODIGO_BARRAS,  itens.QTDE,   itens.VALOR_CUSTO)  
+    historicoKardex(itens.CODIGO_BARRAS,  itens.QTDE,   SEQUENCIA_PEDIDO)
+    updateItens(    itens.CODIGO_BARRAS,  itens.QTDE, itens.VALOR_CUSTO,  SEQUENCIA_PEDIDO) 
 
   }) 
 }
