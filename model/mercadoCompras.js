@@ -2,6 +2,11 @@ const oracledb = require('oracledb');
 const database = require('../services/database.js');
  
 
+var arredonda = function(numero, casasDecimais) {
+  casasDecimais = typeof casasDecimais !== 'undefined' ?  casasDecimais : 2;
+  return +(Math.floor(numero + ('e+' + casasDecimais)) + ('e-' + casasDecimais));
+};
+
 const baseQuery =
  `  select ID,
  TRUNC(DATA) AS DATA,
@@ -72,10 +77,7 @@ function dataAtualFormatada(dataFormat){
   return diaF+"/"+mesF+"/"+anoF;
 }
 
-var arredonda = function(numero, casasDecimais) {
-  casasDecimais = typeof casasDecimais !== 'undefined' ?  casasDecimais : 2;
-  return +(Math.floor(numero + ('e+' + casasDecimais)) + ('e-' + casasDecimais));
-};
+
 
   async function ajustandoLista () {
     result.rows.map(x => {
@@ -163,7 +165,7 @@ async function historicoKardex (codBarras,qtde_compra,ID_COMPRA) {
  
     resultItens = await getQtdeitem(codBarras) 
     var qtdeFinal   = resultItens.QTDE_ESTOQUE+qtde_compra
-    var custo       = total / qtde_compra
+    var custo       = arredonda((total / qtde_compra),2)
     console.log('o custo atual é: '+custo)
 
     console.log('qtde Agora é '+ qtdeFinal)

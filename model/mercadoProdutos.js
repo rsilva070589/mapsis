@@ -4,7 +4,7 @@ const database = require('../services/database.js');
 const baseQuery =
  `select
   *
-  from mercado_produtos
+  from vwmercado_produtos
   where 1=1
   `;
 
