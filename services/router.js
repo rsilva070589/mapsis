@@ -9,6 +9,7 @@ const { body, validationResult} = require('express-validator');
 
 const mercadoCompras = require('../controllers/mercadoCompras.js'); 
 const mercadoDemanda = require('../controllers/mercadoDemanda.js'); 
+const mercadoHistorico = require('../controllers/mercadoHistorico.js'); 
 const mercadoMigracao = require('../controllers/mercadoMigracao.js'); 
 const mercadoProdutos = require('../controllers/mercadoProdutos.js'); 
 const mercadoVendas = require('../controllers/mercadoVendas.js'); 
@@ -237,8 +238,13 @@ router.route('/mercadovendas/:id?')
   );
 
 
-  router.route('/mercadodemanda/:id?')
+  router.route('/mercadodemanda/:id?')  
 .get(mercadoDemanda.get)
+
+router.route('/mercadohistorico/:id?')
+.get(mercadoHistorico.get)
+
+ 
 
   router.route('/mercadoprodutos/:id?')
 .get(mercadoProdutos.get)

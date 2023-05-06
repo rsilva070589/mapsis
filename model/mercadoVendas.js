@@ -12,7 +12,8 @@ const baseQuery =
            VALOR,
            CUSTO,
            LUCRO, 
-           PERC_LUCRO 
+           PERC_LUCRO,
+           CATEGORIA
     from mercado_venda_itens_lucro 
     where 1=1   
   `; 
@@ -90,6 +91,7 @@ var arredonda = function(numero, casasDecimais) {
         "CUSTO": arredonda(x.CUSTO, 2),
         "LUCRO": arredonda(x.LUCRO,2),
         "PERC_LUCRO": arredonda(x.PERC_LUCRO,2),
+        "CATEGORIA": x.CATEGORIA
       }
       arrayVendaLista.push(vendasLista)
     })
