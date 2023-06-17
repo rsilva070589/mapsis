@@ -36,7 +36,9 @@ function getItemFromRec(req) {
     DESCONTO:     req.body.DESCONTO,
     DATA:         req.body.DATA,
     STATUS:       req.body.STATUS,
-    ITENS:        req.body.ITENS
+    ITENS:        req.body.ITENS,
+    FORMA_PGTO:   req.body.FORMA_PGTO,
+    TIPO_VENDA:   req.body.TIPO_VENDA
   };
 
   console.log(VENDAS)

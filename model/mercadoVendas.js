@@ -13,7 +13,8 @@ const baseQuery =
            CUSTO,
            LUCRO, 
            PERC_LUCRO,
-           CATEGORIA
+           CATEGORIA,
+           FORMA_PGTO
     from mercado_venda_itens_lucro 
     where 1=1   
   `; 
@@ -91,7 +92,8 @@ var arredonda = function(numero, casasDecimais) {
         "CUSTO": arredonda(x.CUSTO, 2),
         "LUCRO": arredonda(x.LUCRO,2),
         "PERC_LUCRO": arredonda(x.PERC_LUCRO,2),
-        "CATEGORIA": x.CATEGORIA
+        "CATEGORIA": x.CATEGORIA,
+        "FORMA_PGTO": x.FORMA_PGTO 
       }
       arrayVendaLista.push(vendasLista)
     })
@@ -116,6 +118,8 @@ module.exports.find = find;
     ,DATA
     ,STATUS
     ,OBSERVACAO
+    ,FORMA_PGTO
+    ,TIPO_VENDA
     ) values (
     :ID 
     ,:COD_CLIENTE
@@ -125,6 +129,8 @@ module.exports.find = find;
     ,SYSDATE - 0.3
     ,1
     ,:OBSERVACAO
+    ,:FORMA_PGTO
+    ,:TIPO_VENDA
     )`
 
     const createSqlVendasItens=`
@@ -213,7 +219,9 @@ async function create(emp) {
                                                         ITEM.COD_ENDERECO,                                                         
                                                         ITEM.VALOR,
                                                         ITEM.DESCONTO,
-                                                        ITEM.OBSERVACAO                                                         
+                                                        ITEM.OBSERVACAO,
+                                                        ITEM.FORMA_PGTO    ,
+                                                        ITEM.TIPO_VENDA                                                    
                                                       ]
                                                       , { autoCommit: true });
  
