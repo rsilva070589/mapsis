@@ -129,7 +129,7 @@ module.exports.find = find;
     :COD_EMPRESA,
     :COD_OS_AGENDA,
     'A',
-    'NBS',
+    'MAPSIS',
     :CONSULTOR,
     :PRISMA,   
     'R',
@@ -267,8 +267,10 @@ const TabelaOSAgenda = await database.simpleExecute(createSqlOSAgenda,
                                                 NumeroAgenda                                                
                                               ]
                                               , { autoCommit: true });  
+
+console.log(NEWOSAGENDA.PRIMA)
                                               
-  const TabelaOSAgendaServico = await database.simpleExecute
+                               await database.simpleExecute
                                             (createSqlOsAgendaServico, 
                                               [  
                                                 NEWOSAGENDA.COD_EMPRESA,
@@ -280,7 +282,8 @@ const TabelaOSAgenda = await database.simpleExecute(createSqlOSAgenda,
                                                 SERVICO.TEMPO_PADRAO,
                                                 SERVICO.TEMPO_PADRAO
                                               ]
-                                              , { autoCommit: true }); 
+                                              , { autoCommit: true })
+                                             
                                                
 
 }
@@ -290,7 +293,7 @@ async function getBox() {
   const result   = await database.simpleExecute(SqlNumeracaoOSAgenda, [NEWOSAGENDA.PRISMA,NEWOSAGENDA.COD_EMPRESA])  
   const valor = result.rows[0]['QTDE']
   console.log('validar Box: '+valor)
-  if (valor == 0) {    
+  if (valor == 0 && NEWOSAGENDA.PRISMA != undefined  ) {    
     arrayErrosValidacao.push({"msg":"Box nao existe","param":"PRISMA","location":"Base Cliente"})
   } else {       
   }   
@@ -415,3 +418,24 @@ module.exports.create = create;
    
 
 module.exports.delete = del;
+
+  async function put(context) {
+  let schemaUsuario = context.SCHEMA;    
+  
+  console.log(context)
+  const updateSql = `
+  UPDATE "${schemaUsuario}".OS_AGENDA og
+   set og.status_agenda=:status  
+    where og.cod_empresa = :cod_empresa
+     and cod_os_agenda = :cod_os_agenda
+     `;
+  
+  
+  console.log(updateSql)
+
+  result = await database.simpleExecute(updateSql, [context.STATUS, context.COD_EMPRESA, context.COD_AGENDAMENTO],{autoCommit: true});
+  return context.COD_AGENDAMENTO;
+  
+};
+
+module.exports.update = put;

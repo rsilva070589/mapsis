@@ -7,19 +7,19 @@ const metadata = require('gcp-metadata');
 const {OAuth2Client} = require('google-auth-library');
  
 const oAuth2Client = new OAuth2Client();
-const clientes   = require('../controllers/clientes.js');
+//const clientes   = require('../controllers/clientes.js');
 const modelos    = require('../controllers/modelos.js');
 const servicos   = require('../controllers/servicos.js');
 const tecnicos   = require('../controllers/tecnicos.js');
-const cidades    = require('../controllers/cidades.js');
+//const cidades    = require('../controllers/cidades.js');
 const frota      = require('../controllers/frota.js');
 const agenda     = require('../controllers/agenda.js');
-const os         = require('../controllers/os.js');
+//const os         = require('../controllers/os.js');
 const empresas   = require('../controllers/empresas.js'); 
 const constraint  = require('../controllers/constraint.js');
 
-require("dotenv-safe").config();
-const jwt = require('jsonwebtoken');
+//require("dotenv-safe").config();
+//const jwt = require('jsonwebtoken');
  
  
 //authentication
@@ -55,23 +55,24 @@ function verifyJWT(req, res, next){
 
  
 router.route('/constraint/:id?')
-.get(constraint.get);    
+.post(constraint.get);    
 
 
 router.route('/modelos/:id?')
-.get(modelos.get);    
+.post(modelos.get);    
+
+
 
 router.route('/servicos/:id?')
-.get(servicos.get);     
+.post(servicos.get);     
  
 router.route('/tecnicos/:id?')
-.get(tecnicos.get);    
+.post(tecnicos.get);    
 
-router.route('/cidades/:id?')
-.get(cidades.get);
+//router.route('/cidades/:id?').post(cidades.get);
 
 router.route('/empresas/:id?')
-.get(empresas.get);
+.post(empresas.get);
  
 
   
@@ -79,15 +80,16 @@ router.route('/empresas/:id?')
  
 
 router.route('/frota/:id?')
-.get(frota.get); 
+.post(frota.get); 
 
 router.route('/agenda/:id?')
 .get(agenda.get)
 .delete(agenda.delete)
+.put(agenda.put)
 .post(
   [
     body("COD_EMPRESA").isInt().withMessage("Informe o Codigo da Empresa"),
-    body("PRISMA").notEmpty().withMessage("Informe o Prisma"),
+//    body("PRISMA").notEmpty().withMessage("Informe o Prisma"),
     body("COD_CLIENTE").isLength({ min: 8, max: 14 }).withMessage("CPF ou CNPJ Precisa ter 11 OU 14 digitos!"),
     body("COD_PRODUTO").notEmpty().withMessage("Informe o Cod Produto"),
     body("COD_MODELO").notEmpty().withMessage("Informe o Cod Modelo"),
@@ -117,6 +119,7 @@ router.route('/agenda/:id?')
    ,agenda.post
   );
 
+  /** 
 router.route('/os/:id?')
 .get(os.get)
 .post(
@@ -139,8 +142,8 @@ router.route('/os/:id?')
           }
    ,os.post
   );
- 
-
+ */
+/** 
 router.route('/clientes/:id?')
 .get(clientes.get)
 .put(clientes.put) 
@@ -162,8 +165,9 @@ router.route('/clientes/:id?')
               }
        ,clientes.post
       ); 
-    
-  ;
+*/    
+  
 
 
 module.exports = router;
+

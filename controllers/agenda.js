@@ -85,19 +85,18 @@ async function post(req, res, next) {
 
 module.exports.post = post;
 
-/*
+
 
 
 async function put(req, res, next) {
   try {
-    let employee = getEmployeeFromRec(req);
+     
+    const success =  await employees.update(req.body);
 
-    employee.employee_id = parseInt(req.params.id, 10);
-
-    employee = await employees.update(employee);
-
-    if (employee !== null) {
-      res.status(200).json(employee);
+    if (success) {
+      res.status(200).json({'result': 'agendamento conficrmado com sucesso',
+                             'numero_agenda': success         
+                         });
     } else {
       res.status(404).end();
     }
@@ -107,7 +106,7 @@ async function put(req, res, next) {
 }
 
 module.exports.put = put;
-*/
+
 
 async function del(req, res, next) {
   try {
@@ -131,5 +130,6 @@ async function del(req, res, next) {
 }
 
 module.exports.delete = del;
+
 
 
